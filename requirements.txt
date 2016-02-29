@@ -1,0 +1,6 @@
+-e git+https://github.com/ansible/ansible.git@stable-2.0#egg=Ansible
+boto==2.38.0
+boto3==1.2.2
+botocore==1.3.11
+troposphere==1.4.0
+requests==2.9.1
