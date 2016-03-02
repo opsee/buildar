@@ -2,34 +2,23 @@
 
 import boto3, sys, time, requests, json
 
-import helpers.waiters as waiters
-from pipeline.cloudformation import Builder
+from buildar.pipeline.pipeline import Builder, Provisioner, Imager, Pipeline
 
 build_region = 'us-east-1'
 build_vpc = 'vpc-31a0cc54'
-cfn = boto3.client('cloudformation')
+build_context = {
+    'build_vpc': build_vpc,
+    'build_region': build_region,
+}
 
-print 'Launching build stack'
+builder = Builder()
+config = file('buildar.yaml', 'r')
+provisioner = Provisioner(config)
+imager = Imager()
 
-build_template = Builder(build_region, build_vpc)
-stack_name = 'Bastion-build-%s' % int(time.time())
-resp = cfn.create_stack(
-    StackName=stack_name,
-    TemplateBody=build_template.template_json(),
-)
+pipeline = Pipeline()
+pipeline.add_step(builder)
+pipeline.add_step(provisioner)
+pipeline.add_step(imager)
 
-stack_id = resp['StackId']
-print 'Build stack id: %s' % stack_id
-
-print 'Waiting for stack creation to finish...'
-waiter = waiters.CloudFormationWaiter()
-waiter.wait(stack_name, 'CREATE_COMPLETE')
-
-stack_resp = cfn.describe_stacks(StackName=stack_name)
-instance_id = stack_resp['Stacks'][0]['Outputs'][0]['OutputValue']
-
-ec2 = boto3.client('ec2')
-print 'Waiting for build instance (%s) to become available...' % instance_id
-waiter = ec2.get_waiter('instance_running')
-waiter.wait(InstanceIds=[instance_id])
-
+pipeline.execute(build_context)

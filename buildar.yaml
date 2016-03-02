@@ -1,0 +1,50 @@
+---
+units:
+  - name: aws-command.service
+    action: enable
+  - name: bastion-etcd.service
+    action: enable
+  - name: checker.service
+    action: enable
+  - name: connector.service
+    action: enable
+  - name: discovery.service
+    action: enable
+  - name: docker-wipe.service
+    action: enable
+  - name: env-lock.path
+    action: enable
+  - name: env-lock.service
+    action: enable
+  - name: hacker.service
+    action: enable
+  - name: logspout.service
+    action: enable
+  - name: monitor.service
+    action: enable
+  - name: nsqadmin.service
+    action: enable
+  - name: nsqd.service
+    action: enable
+  - name: opsee-network.service
+    action: enable
+  - name: register.service
+    action: enable
+  - name: runner.service
+    action: enable
+  - name: shovel-discovery.service
+    action: enable
+  - name: shovel-results.service
+    action: enable
+  - name: slate.service
+    action: enable
+  - name: test-runner.service
+    action: enable
+
+# File modes must have a leading 0 because octal
+files:
+  - name: docker_config.json
+    remote_path: /home/core/.dockercfg
+    user: core
+    group: core
+    mode: 0600

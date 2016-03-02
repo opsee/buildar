@@ -1,12 +1,17 @@
 import boto3
 
-ec2 = boto3.client('ec2')
+import time
+from buildar.pipeline.step import Step
 
-class Ami(object):
+class Imager(Step):
     def __init__(self):
-        pass
+        self._ec2 = boto3.client('ec2')
 
-    def build(self):
+    def build(self, build_context):
+        # TODO: Wait on the instance to be in the stopped state
+        instance_id = build_context['instance_id']
+        ec2 = self._ec2
+
         response = ec2.describe_instances(InstanceIds=[ instance_id ])
         volume_id = response['Reservations'][0]['Instances'][0]['BlockDeviceMappings'][0]['Ebs']['VolumeId']
         print 'Build instance root volume id: %s' % volume_id
@@ -43,4 +48,10 @@ class Ami(object):
         waiter = ec2.get_waiter('image_available')
         waiter.wait(ImageIds=[image_id])
 
-        print ec2.describe_images(ImageIds=[image_id])
+        # ec2.describe_images(ImageIds=[image_id])
+        build_context['image_id'] = image_id
+
+        return build_context
+
+    def cleanup(self, build_context):
+        pass

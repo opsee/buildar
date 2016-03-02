@@ -1,0 +1,5 @@
+[Unit]
+Description=Bastion - PathLock
+
+[Path]
+PathExists=/etc/opsee/bastion-env.sh

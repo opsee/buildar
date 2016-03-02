@@ -1,0 +1,13 @@
+[Unit]
+Description=Triggered after generation of env file
+ConditionFileNotEmpty=/etc/opsee/bastion-env.sh
+ConditionPathIsReadWrite=/etc/opsee/bastion-env.sh
+
+[Service]
+Restart=always
+RestartSec=1s
+ExecStart=/bin/sh -c "echo Bastion Env Ready"
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
