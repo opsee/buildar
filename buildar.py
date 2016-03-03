@@ -11,17 +11,23 @@ build_context = {
     'build_region': build_region,
 }
 
+
 builder = Builder()
 config = file('buildar.yaml', 'r')
 provisioner = Provisioner(config)
 imager = Imager()
 
+build_pipeline = Pipeline()
+build_pipeline.add_step(builder)
+build_pipeline.add_step(provisioner)
+build_pipeline.add_step(imager)
+
+test_pipeline = Pipeline()
 launcher = Launcher()
+test_pipeline.add_step(launcher)
 
 pipeline = Pipeline()
-pipeline.add_step(builder)
-pipeline.add_step(provisioner)
-pipeline.add_step(imager)
-pipeline.add_step(launcher)
+pipeline.add_step(build_pipeline)
+pipeline.add_step(test_pipeline)
 
 pipeline.execute(build_context)
