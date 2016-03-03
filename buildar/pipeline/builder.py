@@ -57,11 +57,13 @@ class Builder(Step):
         secgroup.VpcId = build_vpc
         template.add_resource(secgroup)
 
-        instance = ec2.Instance('buildInstance')
-        instance.ImageId = self._latest_ami(build_region)
-        instance.InstanceType = 't2.micro'
-        instance.SecurityGroupIds = [Ref(secgroup)]
-        instance.KeyName = self.key['KeyName']
+        instance = ec2.Instance(
+            'buildInstance',
+            ImageId=self._latest_ami(build_region),
+            Instancetype='t2.micro',
+            SecurityGroupIds=[Ref(secgroup)],
+            KeyName=self.key['KeyName'],
+        )
         template.add_resource(instance)
 
         template.add_output([
