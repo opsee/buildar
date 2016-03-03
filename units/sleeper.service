@@ -1,0 +1,16 @@
+[Unit]
+Description=Base container for opsee-side services
+After=docker.service opsee-network.service
+Requires=docker.serivce opsee-network.service
+
+[Service]
+User=core
+TimeoutStartSec=0
+RestartSec=5s
+EnvironmentFile=/etc/opsee/bastion-env.sh
+ExecStartPre=-/usr/bin/docker kill %p
+ExecStartPre=-/usr/bin/docker rm %p
+ExecStart=/usr/bin/docker run --cgroup-parent=systemd --rm --name %p --net=opsee --dns=${DNS_SERVER} tianon/sleeping-beauty
+
+[Install]
+WantedBy=opsee-network.service

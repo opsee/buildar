@@ -1,7 +1,7 @@
 [Unit]
 Description=Bastion - Checker
-After=opsee-network.service
-Requires=opsee-network.service
+After=opsee-network.service sleeper.service docker.service env-lock.service
+Requires=opsee-network.service sleeper.service docker.service env-lock.service
 
 [Service]
 Restart=always
@@ -11,9 +11,8 @@ RestartSec=5s
 EnvironmentFile=/etc/opsee/bastion-env.sh
 ExecStartPre=-/usr/bin/docker stop -t 5 %p
 ExecStartPre=-/usr/bin/docker rm %p
-ExecStartPre=/usr/bin/docker pull quay.io/opsee/bastion:${BASTION_VERSION}
-ExecStart=/usr/bin/docker run --rm --cgroup-parent=systemd --name %p --net=container:opsee-network -e ETCD_HOST=http://etcd:2379 -e NSQD_HOST=nsqd:4150 --env-file /etc/opsee/bastion-env.sh quay.io/opsee/bastion:${BASTION_VERSION} /checker -admin_port=4000 --results test_check_results --requests test_check --channel checker_test_check_results
+ExecStart=/usr/bin/docker run --rm --cgroup-parent=systemd --name %p --net=container:sleeper -network -e ETCD_HOST=http://etcd:2379 -e NSQD_HOST=nsqd:4150 --env-file /etc/opsee/bastion-env.sh quay.io/opsee/bastion:${BASTION_VERSION} /checker -admin_port=4000 --results test_check_results --requests test_check --channel checker_test_check_results
 ExecStop=/usr/bin/docker stop -t 5 %p
 
 [Install]
-WantedBy=multi-user.target
+WantedBy=sleeper.service

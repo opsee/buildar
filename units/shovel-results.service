@@ -1,7 +1,7 @@
 [Unit]
 Description=NSQ Shovel: Results
-After=opsee-network.service
-Requires=opsee-network.service
+After=opsee-network.service sleeper.service docker.service
+Requires=opsee-network.service sleeper.service docker.service
 
 [Service]
 Restart=always
@@ -11,9 +11,8 @@ TimeoutStartSec=0
 RestartSec=5s
 ExecStartPre=-/usr/bin/docker stop -t 5 %p
 ExecStartPre=-/usr/bin/docker rm %p
-ExecStartPre=/usr/bin/docker pull nsqio/nsq:v0.3.5
-ExecStart=/usr/bin/docker run --rm --cgroup-parent=systemd --name %p --net="container:opsee-network" nsqio/nsq:v0.3.5 /nsq_to_nsq --topic=results --channel=%p --nsqd-tcp-address=nsqd:4150 --destination-nsqd-tcp-address=${NSQD_HOST} --destination-topic=_.results
+ExecStart=/usr/bin/docker run --rm --cgroup-parent=systemd --name %p --net="container:sleeper" nsqio/nsq:v0.3.5 /nsq_to_nsq --topic=results --channel=%p --nsqd-tcp-address=nsqd:4150 --destination-nsqd-tcp-address=${NSQD_HOST} --destination-topic=_.results
 ExecStop=/usr/bin/docker stop -t 5 %p
 
 [Install]
-WantedBy=multi-user.target
+WantedBy=sleeper.service

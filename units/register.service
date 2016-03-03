@@ -1,7 +1,7 @@
 [Unit]
 Description=Bastion - Registration
-After=opsee-network.service
-Requires=opsee-network.service
+After=opsee-network.service sleeper.service docker.service
+Requires=opsee-network.service sleeper.service docker.service
 
 [Service]
 Restart=always
@@ -11,9 +11,8 @@ TimeoutStartSec=0
 RestartSec=5s
 ExecStartPre=-/usr/bin/docker stop -t 5 %p
 ExecStartPre=-/usr/bin/docker rm %p
-ExecStartPre=/usr/bin/docker pull quay.io/opsee/zuul:latest
-ExecStart=/usr/bin/docker run --rm --cgroup-parent=systemd --name=%p --env-file=/etc/opsee/bastion-env.sh --net="container:opsee-network" --volume /var/run/opsee:/state -e ETCD_HOST=http://etcd:2379 -e NSQD_HOST quay.io/opsee/zuul:latest register -f /state/ip
+ExecStart=/usr/bin/docker run --rm --cgroup-parent=systemd --name=%p --env-file=/etc/opsee/bastion-env.sh --net="container:sleeper" --volume /var/run/opsee:/state -e ETCD_HOST=http://etcd:2379 -e NSQD_HOST quay.io/opsee/zuul:latest register -f /state/ip
 ExecStop=/usr/bin/docker stop -t 5 %p
 
 [Install]
-WantedBy=multi-user.target
+WantedBy=sleeper.service
