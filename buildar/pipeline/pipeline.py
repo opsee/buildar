@@ -22,14 +22,13 @@ class Pipeline(Step):
     def execute(self, build_context):
         executed = []
         current_step = ''
-        exception_cause = ''
+        exception_cause = None
 
         try:
             for step in self._steps:
                 current_step = type(step).__name__
                 executed.append(step)
                 build_context = step.build(build_context)
-
         except Exception as e:
             print 'Build failed at step %s: %s' % (current_step, e)
             exception_cause = e
@@ -39,4 +38,6 @@ class Pipeline(Step):
                 step.cleanup(build_context)
             except Exception as e:
                 print 'Cleanup step %s failed: %s' % (type(step).__name__, e)
-            raise exception_cause
+            
+        if exception_cause is not None:
+            raise exception_cause 

@@ -88,8 +88,9 @@ class Launcher(Step):
         waiter = ec2.get_waiter('instance_running')
         waiter.wait(InstanceIds=[instance_id])
 
-        public_ip = ec2.describe_instances(InstanceIds=[build_context['instance_id']])['Reservations'][0]['Instances'][0]['NetworkInterfaces'][0]['Association']['PublicIp']
+        public_ip = ec2.describe_instances(InstanceIds=[instance_id])['Reservations'][0]['Instances'][0]['NetworkInterfaces'][0]['Association']['PublicIp']
         print 'Got instance public IP: %s' % public_ip
+        return build_context
 
     def cleanup(self, build_context):
         pass

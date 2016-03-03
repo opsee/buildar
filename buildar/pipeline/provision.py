@@ -8,8 +8,9 @@ from buildar.pipeline.step import Step
 class Provisioner(Step):
     def __init__(self, config):
         cfg = yaml.load(config)
-        self._units = cfg['units']
-        self._files = cfg['files']
+        self._units = cfg.get('units', [])
+        self._files = cfg.get('files', [])
+        self._images = cfg.get('images', [])
 
         env.user = 'core'
         env.connection_attempts = 10
@@ -37,6 +38,13 @@ class Provisioner(Step):
             result = sudo('systemctl %s %s' % (unit_action, unit_name), stderr=sys.stdout)
             if result.failed:
                 raise Exception('Unable to %s systemd unit: %s' % (unit_action, unit_name))
+
+    def _pull_images(self):
+        for image in self._images:
+            print 'Pulling image %s' % image
+            result = run('docker pull %s' % image, timeout=240)
+            if result.failed:
+                raise Exception('Failed to pull %s' % image)
 
     def _copy_files(self):
         for f in self._files:
@@ -69,7 +77,12 @@ class Provisioner(Step):
 
     def provision_bastion(self):
         self._install_units()
+        # TODO(greg): Right now there is a dependency on the docker config being copied
+        # over before we can pull images. That's kind of shitty. We should figure out a
+        # way to do this without having that dependency. Perhaps, pull images locally,
+        # then export them to a tar, scp over, and import?
         self._copy_files()
+        self._pull_images()
         self._shutdown()
 
     def build(self, build_context):
