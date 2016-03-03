@@ -17,6 +17,7 @@ class Provisioner(Step):
     """Provisioner will provision an EC2 instance."""
 
     def __init__(self, config):
+        super
         cfg = yaml.load(config)
         self._units = cfg.get('units', [])
         self._files = cfg.get('files', [])
@@ -109,4 +110,5 @@ class Provisioner(Step):
 
     def cleanup(self, build_context):
         # TODO(greg): Implement cleanup here.
-        pass
+        if self.cleanup:
+            pass

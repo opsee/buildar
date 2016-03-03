@@ -11,6 +11,7 @@ class Imager(Step):
     become available, and then create an AMI from that image."""
 
     def __init__(self):
+        super
         self._ec2 = boto3.client('ec2')
 
     def build(self, build_context):
@@ -62,4 +63,5 @@ class Imager(Step):
         return build_context
 
     def cleanup(self, build_context):
-        pass
+        if self.cleanup:
+            pass

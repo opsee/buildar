@@ -69,6 +69,7 @@ class Launcher(Step):
     previously-built AMI."""
 
     def __init__(self):
+        super
         self._ec2 = boto3.client('ec2')
         self._cfn = boto3.client('cloudformation')
 
@@ -83,6 +84,7 @@ class Launcher(Step):
 
         userdata = file('userdata', 'r').read()
         stack_name = 'opsee-bastion-build-%s' % int(time.time())
+        build_context['launch_stack_name'] = stack_name
 
         template = template_json(
             userdata,
@@ -114,4 +116,7 @@ class Launcher(Step):
         return build_context
 
     def cleanup(self, build_context):
-        pass
+        if self.cleanup:
+            print 'Cleaning up launch/test stack...'
+            self._cfn.delete_stack(StackName=build_context['launch_stack_name'])
+

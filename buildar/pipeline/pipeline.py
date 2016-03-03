@@ -22,7 +22,8 @@ class Pipeline(Step):
     in reverse order, s.t. the output that a step depends on from the previous
     step still exists in an unaltered state."""
 
-    def __init__(self):
+    def __init__(self, **kwargs):
+        super
         self._steps = []
         self._executed = []
         self._failed = False
@@ -56,17 +57,24 @@ class Pipeline(Step):
         """Cleanup iterates over the steps that the pipeline attempted to
         execute in the reverse order that they were executed. It raises
         the exception of the failed build step if a step failed during
-        build()."""
+        build().
+        
+        Pipelines adhere to cleanup of all steps included in the pipeline. You
+        can either set cleanup=True/False on individual steps or on the
+        pipeline. This can also be done in combination. If you want to cleanup
+        all but one step in a pipeline, you can set the Pipeline cleanup to
+        True, and then set that individual step's cleanup to False."""
 
-        self._executed.reverse()
-        for step in self._executed:
-            try:
-                step.cleanup(build_context)
-            except StandardError as ex:
-                print 'Cleanup step %s failed: %s' % (type(step).__name__, ex)
+        if self.cleanup:
+            self._executed.reverse()
+            for step in self._executed:
+                try:
+                    step.cleanup(build_context)
+                except StandardError as ex:
+                    print 'Cleanup step %s failed: %s' % (type(step).__name__, ex)
 
-        if self._failed:
-            raise self._exception_cause
+            if self._failed:
+                raise self._exception_cause
 
     def execute(self, build_context):
         """Execute is a convenience function that ties build and cleanup together."""

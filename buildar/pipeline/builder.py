@@ -19,6 +19,7 @@ class Builder(Step):
     VIRT_TYPE = 'hvm'
 
     def __init__(self):
+        super
         self._ec2 = boto3.client('ec2')
         self._cfn = boto3.client('cloudformation')
         self.key = {}
@@ -60,7 +61,7 @@ class Builder(Step):
         instance = ec2.Instance(
             'buildInstance',
             ImageId=self._latest_ami(build_region),
-            Instancetype='t2.micro',
+            InstanceType='t2.micro',
             SecurityGroupIds=[Ref(secgroup)],
             KeyName=self.key['KeyName'],
         )
@@ -117,12 +118,13 @@ class Builder(Step):
         return build_context
 
     def cleanup(self, build_context):
-        try:
-            self._ec2.delete_key_pair(KeyName=build_context['key_name'])
-        except StandardError as ex:
-            print 'Failed to delete KeyPair: %s' % ex
-        try:
-            self._cfn.delete_stack(StackName=build_context['stack_name'])
-        except StandardError as ex:
-            print 'Failed to delete stack: %s' % ex
-            raise
+        if self.cleanup:
+            try:
+                self._ec2.delete_key_pair(KeyName=build_context['key_name'])
+            except StandardError as ex:
+                print 'Failed to delete KeyPair: %s' % ex
+            try:
+                self._cfn.delete_stack(StackName=build_context['stack_name'])
+            except StandardError as ex:
+                print 'Failed to delete stack: %s' % ex
+                raise

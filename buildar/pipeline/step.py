@@ -6,6 +6,9 @@ class Step(object):
     a build_context dict as an argument. build() must return the build_context.
     """
 
+    def __init__(self, **kwargs):
+        self.cleanup = kwargs.get('cleanup', True)
+
     def build(self, build_context):
         """The build step. Returns build_context."""
 
