@@ -8,9 +8,11 @@ class Imager(Step):
         self._ec2 = boto3.client('ec2')
 
     def build(self, build_context):
-        # TODO: Wait on the instance to be in the stopped state
         instance_id = build_context['instance_id']
         ec2 = self._ec2
+
+        waiter = ec2.get_waiter('instance_stopped')
+        waiter.wait(InstanceIds=[instance_id])
 
         response = ec2.describe_instances(InstanceIds=[ instance_id ])
         volume_id = response['Reservations'][0]['Instances'][0]['BlockDeviceMappings'][0]['Ebs']['VolumeId']

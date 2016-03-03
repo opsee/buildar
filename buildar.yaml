@@ -48,3 +48,13 @@ files:
     user: core
     group: core
     mode: 0600
+  - name: journald.conf
+    remote_path: /etc/systemd/journald.conf
+    user: root
+    group: root
+    mode: 0644
+  - name: docker.service.d
+    remote_path: /etc/systemd/system/
+    user: root
+    group: root
+    mode: 0755

@@ -2,7 +2,7 @@
 
 import boto3, sys, time, requests, json
 
-from buildar.pipeline.pipeline import Builder, Provisioner, Imager, Pipeline
+from buildar.pipeline.pipeline import Builder, Provisioner, Imager, Pipeline, Launcher
 
 build_region = 'us-east-1'
 build_vpc = 'vpc-31a0cc54'
@@ -16,9 +16,12 @@ config = file('buildar.yaml', 'r')
 provisioner = Provisioner(config)
 imager = Imager()
 
+launcher = Launcher()
+
 pipeline = Pipeline()
 pipeline.add_step(builder)
 pipeline.add_step(provisioner)
 pipeline.add_step(imager)
+pipeline.add_step(launcher)
 
 pipeline.execute(build_context)

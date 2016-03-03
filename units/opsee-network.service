@@ -4,8 +4,10 @@ After=env-lock.service docker.service
 Requires=env-lock.service docker.service
 
 [Service]
+User=core
 TimeoutStartSec=0
-FailureAction=reboot
+Restart=on-failure
+RestartSec=5s
 EnvironmentFile=/etc/opsee/bastion-env.sh
 ExecStartPre=-/usr/bin/docker pull tianon/sleeping-beauty
 ExecStartPre=-/usr/bin/docker kill %p
