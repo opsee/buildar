@@ -37,7 +37,8 @@ class Pipeline(Step):
         return build_context
 
     def cleanup(self, build_context):
-        for step in self._executed.reverse():
+        self._executed.reverse()
+        for step in self._executed():
             try:
                 step.cleanup(build_context)
             except Exception as e:
