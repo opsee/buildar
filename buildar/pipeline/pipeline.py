@@ -15,29 +15,38 @@ class Pipeline(Step):
     """
     def __init__(self):
         self._steps = []
+        self._executed = []
+        self._exception_cause = None
 
     def add_step(self, step):
         self._steps.append(step)
 
-    def execute(self, build_context):
-        executed = []
+    def build(self, build_context):
         current_step = ''
         exception_cause = None
-
+        
         try:
             for step in self._steps:
                 current_step = type(step).__name__
-                executed.append(step)
+                self._executed.append(step)
                 build_context = step.build(build_context)
         except Exception as e:
             print 'Build failed at step %s: %s' % (current_step, e)
-            exception_cause = e
-        
-        for step in executed:
+            self._exception_cause = e
+
+        return build_context
+
+    def cleanup(self, build_context):
+        for step in self._executed.reverse():
             try:
                 step.cleanup(build_context)
             except Exception as e:
                 print 'Cleanup step %s failed: %s' % (type(step).__name__, e)
             
-        if exception_cause is not None:
-            raise exception_cause 
+        if self._exception_cause is not None:
+            raise self._exception_cause 
+
+    def execute(self, build_context):
+        build_context = self.build(build_context)
+        self.cleanup(build_context)
+        

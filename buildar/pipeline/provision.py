@@ -1,5 +1,5 @@
 from os import path
-import os, sys, yaml
+import os, sys, yaml, StringIO
 
 from fabric.api import run, execute, put, env, sudo
 
@@ -42,9 +42,15 @@ class Provisioner(Step):
     def _pull_images(self):
         for image in self._images:
             print 'Pulling image %s' % image
-            result = run('docker pull %s' % image, timeout=240)
+            out = StringIO.StringIO()
+            result = run('docker pull %s' % image, timeout=240, stdout=out, stderr=out)
             if result.failed:
+                print out.getvalue()
+                out.close()
                 raise Exception('Failed to pull %s' % image)
+
+            # This just seems easier than some ridiculous try catch raise finally close business.
+            out.close()
 
     def _copy_files(self):
         for f in self._files:
