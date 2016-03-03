@@ -1,6 +1,17 @@
+"""Step is an interface guide for build steps.
+"""
+
 class Step(object):
-    def run(self, build_context):
-        raise NotImplemented('Sub-classes must implement cleanup()')
+    """Sub-classes should implement run and cleanup. Each function takes
+    a build_context dict as an argument. build() must return the build_context.
+    """
+
+    def build(self, build_context):
+        """The build step. Returns build_context."""
+
+        raise NotImplementedError('Sub-classes must implement cleanup()')
 
     def cleanup(self, build_context):
-        raise NotImplemented('Sub-classes must implement cleanup()')
+        """The cleanup step."""
+
+        raise NotImplementedError('Sub-classes must implement cleanup()')

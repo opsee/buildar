@@ -1,20 +1,28 @@
-import boto3
+"""Build an AMI"""
 
 import time
+
+import boto3
+
 from buildar.pipeline.step import Step
 
 class Imager(Step):
+    """Imager will snapshot an instance's EBS volume, wait for the volume to
+    become available, and then create an AMI from that image."""
+
     def __init__(self):
         self._ec2 = boto3.client('ec2')
 
     def build(self, build_context):
+        """Build the AMI."""
+
         instance_id = build_context['instance_id']
         ec2 = self._ec2
 
         waiter = ec2.get_waiter('instance_stopped')
         waiter.wait(InstanceIds=[instance_id])
 
-        response = ec2.describe_instances(InstanceIds=[ instance_id ])
+        response = ec2.describe_instances(InstanceIds=[instance_id])
         volume_id = response['Reservations'][0]['Instances'][0]['BlockDeviceMappings'][0]['Ebs']['VolumeId']
         print 'Build instance root volume id: %s' % volume_id
 
@@ -27,21 +35,19 @@ class Imager(Step):
 
         print 'Registering snapshot as AMI...'
         response = ec2.register_image(
-                Name='Opsee-Bastion-%s' % time.time(),
-                Description='Opsee Bastion Software',
-                RootDeviceName='/dev/xvda',
-                VirtualizationType='hvm',
-                Architecture='x86_64',
-                BlockDeviceMappings=[
-                    {
-                        'DeviceName': '/dev/xvda',
-                        'Ebs': {
-                            'SnapshotId': snapshot_id,
-                            'DeleteOnTermination': True,
-                            'VolumeType': 'standard',
-                        }
-                    },
-                ])
+            Name='Opsee-Bastion-%s' % time.time(),
+            Description='Opsee Bastion Software',
+            RootDeviceName='/dev/xvda',
+            VirtualizationType='hvm',
+            Architecture='x86_64',
+            BlockDeviceMappings=[{
+                'DeviceName': '/dev/xvda',
+                'Ebs': {
+                    'SnapshotId': snapshot_id,
+                    'DeleteOnTermination': True,
+                    'VolumeType': 'standard',
+                }
+            }])
 
         image_id = response['ImageId']
         print 'Registered %s as %s' % (snapshot_id, image_id)
