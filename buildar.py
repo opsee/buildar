@@ -2,7 +2,7 @@
 
 import click
 
-from buildar.pipeline.pipeline import Builder, Provisioner, Imager, Pipeline, Launcher
+from buildar.pipeline.pipeline import Builder, Provisioner, Imager, Pipeline, Launcher, Tester
 
 @click.command()
 @click.option('--region', default='us-east-1', help='Region to build in.')
@@ -15,19 +15,15 @@ def build(region, vpc, cleanup):
         'build_region': region,
     }
 
-    builder = Builder()
     config = file('buildar.yaml', 'r')
-    provisioner = Provisioner(config)
-    imager = Imager()
-
     build_pipeline = Pipeline(cleanup=cleanup)
-    build_pipeline.add_step(builder)
-    build_pipeline.add_step(provisioner)
-    build_pipeline.add_step(imager)
+    build_pipeline.add_step(Builder())
+    build_pipeline.add_step(Provisioner(config))
+    build_pipeline.add_step(Imager())
 
     test_pipeline = Pipeline(cleanup=cleanup)
-    launcher = Launcher()
-    test_pipeline.add_step(launcher)
+    test_pipeline.add_step(Launcher())
+    test_pipeline.add_step(Tester())
 
     pipeline = Pipeline(cleanup=cleanup)
     pipeline.add_step(build_pipeline)

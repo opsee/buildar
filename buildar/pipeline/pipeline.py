@@ -13,6 +13,7 @@ from buildar.pipeline.builder import Builder
 from buildar.pipeline.provision import Provisioner
 from buildar.pipeline.ami import Imager
 from buildar.pipeline.launch import Launcher
+from buildar.pipeline.test import Tester
 
 class Pipeline(Step):
 
