@@ -8,11 +8,11 @@ A Pipeline is also a Step and can be embedded in other pipelines.
 """
 
 #pylint: disable=unused-import
-from buildar.pipeline.cloudformation import Builder
+from buildar.pipeline.step import Step
+from buildar.pipeline.builder import Builder
 from buildar.pipeline.provision import Provisioner
 from buildar.pipeline.ami import Imager
 from buildar.pipeline.launch import Launcher
-from buildar.pipeline.step import Step
 
 class Pipeline(Step):
 
