@@ -110,5 +110,5 @@ class Provisioner(Step):
 
     def cleanup(self, build_context):
         # TODO(greg): Implement cleanup here.
-        if self.cleanup:
+        if self.do_cleanup:
             pass

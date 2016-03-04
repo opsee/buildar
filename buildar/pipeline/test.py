@@ -10,6 +10,6 @@ class Tester(Step):
     def build(self, build_context):
         return build_context
 
-    def pass(self, build_context):
-        if self.cleanup:
+    def cleanup(self, build_context):
+        if self.do_cleanup:
             pass

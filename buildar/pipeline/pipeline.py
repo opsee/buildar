@@ -66,7 +66,7 @@ class Pipeline(Step):
         all but one step in a pipeline, you can set the Pipeline cleanup to
         True, and then set that individual step's cleanup to False."""
 
-        if self.cleanup:
+        if self.do_cleanup:
             self._executed.reverse()
             for step in self._executed:
                 try:

@@ -118,7 +118,7 @@ class Builder(Step):
         return build_context
 
     def cleanup(self, build_context):
-        if self.cleanup:
+        if self.do_cleanup:
             try:
                 self._ec2.delete_key_pair(KeyName=build_context['key_name'])
             except StandardError as ex:

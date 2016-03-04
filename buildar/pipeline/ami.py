@@ -63,5 +63,5 @@ class Imager(Step):
         return build_context
 
     def cleanup(self, build_context):
-        if self.cleanup:
+        if self.do_cleanup:
             pass

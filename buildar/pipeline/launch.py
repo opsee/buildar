@@ -116,7 +116,7 @@ class Launcher(Step):
         return build_context
 
     def cleanup(self, build_context):
-        if self.cleanup:
+        if self.do_cleanup:
             print 'Cleaning up launch/test stack...'
             self._cfn.delete_stack(StackName=build_context['launch_stack_name'])
 

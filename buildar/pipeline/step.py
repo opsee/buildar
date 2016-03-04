@@ -7,7 +7,7 @@ class Step(object):
     """
 
     def __init__(self, **kwargs):
-        self.cleanup = kwargs.get('cleanup', True)
+        self.do_cleanup = kwargs.get('cleanup', True)
 
     def build(self, build_context):
         """The build step. Returns build_context."""
