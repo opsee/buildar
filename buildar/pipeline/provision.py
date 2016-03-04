@@ -9,6 +9,7 @@ import sys
 import StringIO
 
 from fabric.api import run, execute, put, env, sudo
+from fabric.network import disconnect_all
 
 from buildar.pipeline.step import Step
 
@@ -104,6 +105,7 @@ class Provisioner(Step):
 
         env.key = build_context['ssh_key']
         execute(self.provision_bastion, hosts=[build_context['public_ip']])
+        disconnect_all()
         return build_context
 
     def cleanup(self, build_context):
