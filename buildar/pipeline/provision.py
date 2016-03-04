@@ -16,15 +16,11 @@ from buildar.pipeline.step import Step
 class Provisioner(Step):
     """Provisioner will provision an EC2 instance."""
 
-    def __init__(self, config):
-        super
+    def __init__(self, config, **kwargs):
+        super(Provisioner, self).__init__(**kwargs)
         self._units = config.get('units', [])
         self._files = config.get('files', [])
         self._images = config.get('images', [])
-
-        env.user = 'core'
-        env.connection_attempts = 10
-        env.timeout = 30
 
     def _install_units(self):
         # We put all of the units at once, so that dependencies don't have to be
@@ -42,16 +38,19 @@ class Provisioner(Step):
                 raise Exception('Unable to copy unit to remote host: %s' % unit_name)
 
         for unit in self._units:
+            out = StringIO.StringIO()
             unit_action = unit['action']
             unit_name = unit['name']
 
-            sudo_result = sudo('systemctl %s %s' % (unit_action, unit_name), stderr=sys.stdout)
+            sudo_result = sudo('systemctl %s %s' % (unit_action, unit_name), stdout=out, stderr=out)
             if sudo_result.failed:
+                print out.getvalue()
+                out.close()
                 raise Exception('Unable to %s systemd unit: %s' % (unit_action, unit_name))
+            out.close()
 
     def _pull_images(self):
         for image in self._images:
-            print 'Pulling image %s' % image
             out = StringIO.StringIO()
             result = run('docker pull %s' % image, timeout=240, stdout=out, stderr=out)
             if result.failed:
@@ -98,17 +97,24 @@ class Provisioner(Step):
         # then export them to a tar, scp over, and import?
         self._copy_files()
         self._pull_images()
+
+        print 'Shutting down build instance...'
         sudo('shutdown -h now', stderr=sys.stdout, quiet=True)
 
     def build(self, build_context):
         """execute the fabric task"""
 
+        env.user = 'core'
+        env.connection_attempts = 10
+        env.timeout = 30
         env.key = build_context['ssh_key']
         execute(self.provision_bastion, hosts=[build_context['public_ip']])
         disconnect_all()
         return build_context
 
     def cleanup(self, build_context):
-        # TODO(greg): Implement cleanup here.
+        """Provisioner has no cleanup, because what would you do? Delete things before you
+        terminate the instance? IDK. Maybe this makes sense later."""
+
         if self.do_cleanup:
             pass

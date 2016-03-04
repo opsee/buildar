@@ -18,8 +18,8 @@ class Builder(Step):
     COREOS_URL = 'https://coreos.com/dist/aws/aws-beta.json'
     VIRT_TYPE = 'hvm'
 
-    def __init__(self):
-        super
+    def __init__(self, **kwargs):
+        super(Builder, self).__init__(**kwargs)
         self._ec2 = boto3.client('ec2')
         self._cfn = boto3.client('cloudformation')
         self.key = {}

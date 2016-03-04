@@ -25,7 +25,7 @@ def build(region, vpc, cleanup):
 
     test_pipeline = Pipeline(cleanup=cleanup)
     test_pipeline.add_step(Launcher())
-    test_pipeline.add_step(Tester())
+    test_pipeline.add_step(Tester(config))
 
     pipeline = Pipeline(cleanup=cleanup)
     pipeline.add_step(build_pipeline)

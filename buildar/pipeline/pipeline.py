@@ -16,7 +16,6 @@ from buildar.pipeline.launch import Launcher
 from buildar.pipeline.test import Tester
 
 class Pipeline(Step):
-
     """Pipeline can be used to encapsulate a set of steps or used as a step
     itself.  Steps' build phases are run in the order that they are added to a
     Pipeline with add_step, but the cleanup phases of those steps are executed
@@ -24,7 +23,7 @@ class Pipeline(Step):
     step still exists in an unaltered state."""
 
     def __init__(self, **kwargs):
-        super
+        super(Pipeline, self).__init__(**kwargs)
         self._steps = []
         self._executed = []
         self._failed = False

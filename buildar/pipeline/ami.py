@@ -10,8 +10,8 @@ class Imager(Step):
     """Imager will snapshot an instance's EBS volume, wait for the volume to
     become available, and then create an AMI from that image."""
 
-    def __init__(self):
-        super
+    def __init__(self, **kwargs):
+        super(Imager, self).__init__(**kwargs)
         self._ec2 = boto3.client('ec2')
 
     def build(self, build_context):

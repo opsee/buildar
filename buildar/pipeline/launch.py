@@ -9,6 +9,36 @@ import troposphere.ec2 as ec2
 import buildar.helpers.waiters as waiters
 from buildar.pipeline.step import Step
 
+userdata_template = """
+#cloud-config
+write_files:
+  - path: "/etc/opsee/bastion-env.sh"
+    permissions: "0644"
+    owner: "root"
+    content: |
+      CUSTOMER_ID={{ customer_id }}
+      CUSTOMER_EMAIL={{ customer_email }}
+      BASTION_VERSION={{ bastion_version }}
+      BASTION_ID={{ bastion_id }}
+      VPN_PASSWORD={{ vpn_password }}
+      VPN_REMOTE=bastion.opsee.com
+      DNS_SERVER=169.254.169.253
+      NSQD_HOST=nsqd.in.opsee.com:4150
+      BARTNET_HOST=https://bartnet.in.opsee.com
+      BASTION_AUTH_TYPE=BASIC_TOKEN
+      GODEBUG=netdns=cgo
+users:
+  - name: "opsee"
+    groups:
+      - "sudo"
+      - "docker"
+    ssh-authorized-keys:
+      - "{{ launch_ssh_key }}"
+  update:
+    reboot-strategy: "off"
+    group: "beta"
+"""
+
 #pylint: disable=duplicate-code
 def template_json(userdata, build_context):
     """Get a CloudFormation template for a given build_context.
@@ -68,8 +98,8 @@ class Launcher(Step):
     """Launcher launches a CloudFormation stack for a new bastion given a
     previously-built AMI."""
 
-    def __init__(self):
-        super
+    def __init__(self, **kwargs):
+        super(Launcher, self).__init__(**kwargs)
         self._ec2 = boto3.client('ec2')
         self._cfn = boto3.client('cloudformation')
 
@@ -113,6 +143,8 @@ class Launcher(Step):
         public_ip = self._ec2.describe_instances(InstanceIds=[instance_id])['Reservations'][0]\
                 ['Instances'][0]['NetworkInterfaces'][0]['Association']['PublicIp']
         print 'Got instance public IP: %s' % public_ip
+        build_context['launch_public_ip'] = public_ip
+
         return build_context
 
     def cleanup(self, build_context):
