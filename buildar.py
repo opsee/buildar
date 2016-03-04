@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import yaml
 import click
 
 from buildar.pipeline.pipeline import Builder, Provisioner, Imager, Pipeline, Launcher, Tester
@@ -15,7 +16,8 @@ def build(region, vpc, cleanup):
         'build_region': region,
     }
 
-    config = file('buildar.yaml', 'r')
+    cfg_file = file('buildar.yaml', 'r')
+    config = yaml.load(cfg_file)
     build_pipeline = Pipeline(cleanup=cleanup)
     build_pipeline.add_step(Builder())
     build_pipeline.add_step(Provisioner(config))

@@ -8,7 +8,6 @@ from os import path
 import sys
 import StringIO
 
-import yaml
 from fabric.api import run, execute, put, env, sudo
 
 from buildar.pipeline.step import Step
@@ -18,10 +17,9 @@ class Provisioner(Step):
 
     def __init__(self, config):
         super
-        cfg = yaml.load(config)
-        self._units = cfg.get('units', [])
-        self._files = cfg.get('files', [])
-        self._images = cfg.get('images', [])
+        self._units = config.get('units', [])
+        self._files = config.get('files', [])
+        self._images = config.get('images', [])
 
         env.user = 'core'
         env.connection_attempts = 10
