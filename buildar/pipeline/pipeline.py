@@ -46,7 +46,7 @@ class Pipeline(Step):
                 current_step = type(step).__name__
                 self._executed.append(step)
                 build_context = step.build(build_context)
-        except StandardError as ex:
+        except Exception as ex:
             print 'Build failed at step %s: %s' % (current_step, ex)
             self._exception_cause = ex
             self._failed = True
@@ -70,7 +70,7 @@ class Pipeline(Step):
             for step in self._executed:
                 try:
                     step.cleanup(build_context)
-                except StandardError as ex:
+                except Exception as ex:
                     print 'Cleanup step %s failed: %s' % (type(step).__name__, ex)
 
             if self._failed:

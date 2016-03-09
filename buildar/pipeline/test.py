@@ -37,49 +37,46 @@ class Tester(Step):
         print 'Testing bastion units...'
         for unit in self.config['units']:
             if unit['name'].endswith('.service'):
-                out = StringIO.StringIO()
                 svc = unit['name']
                 test_msg = '%s unit is active' % svc
-                run_result = run('systemctl is-active %s' % svc, stdout=out, stderr=out)
+                run_result = run('systemctl is-active %s' % svc, quiet=True)
                 if run_result.succeeded:
                     pass_message(test_msg)
                 else:
                     fail_message(test_msg)
-                    print 'Output from command:'
-                    print out.getvalue()
                     self.failed = True
-                out.close()
+
+    def verify_file_contents(self, remote_path, local_path):
+            hash_md5 = hashlib.md5()
+            hash_md5.update(open(local_path, 'r').read())
+            local_md5 = hash_md5.hexdigest()
+
+            run_result = run('md5sum %s' % remote_path, quiet=True)
+            if run_result.failed:
+                self.failed = True
+                fail_message(test_message)
+
+            remote_md5 = run_result.stdout.split()[0]
+
+            return local_md5 == remote_md5
 
     def verify_files(self):
         """Ensure that the contents of files copied to the bastion match the contents
         of the files locally."""
 
         print 'Testing files...'
-        hash_md5 = hashlib.md5()
         for fil in self.config['files']:
             fname = fil['name']
 
-            local_path = os.path.join(os.getcwd(), fname)
+            local_path = os.path.join(os.getcwd(), 'files', fname)
             remote_path = fil['remote_path']
             test_message = 'File contents match %s -> %s' % (local_path, remote_path)
 
-            with open(local_path, "rb") as fio:
-                for chunk in iter(lambda: fio.read(4096), b""):
-                    hash_md5.update(chunk)
-            local_md5 = hash_md5.hexdigest()
-
-            out = StringIO.StringIO()
-            run_result = run('md5sum %s' % remote_path, stdout=out)
-            if run_result.failed:
-                self.failed = True
-                fail_message(test_message)
-            remote_md5 = out.getvalue()
-
-            if local_md5 == remote_md5:
+            if self.verify_file_contents(remote_path, local_path):
                 pass_message(test_message)
             else:
-                fail_message(test_message)
                 self.failed = True
+                fail_message(test_message)
 
     def verify_monitor(self):
         """Inspect the output from the bastion monitor and make sure everything
@@ -91,14 +88,13 @@ class Tester(Step):
             self.failed = True
             raise StandardError('Failed to pull busybox image.')
 
-        out = StringIO.StringIO()
         test_cmd = 'docker run --rm -it --net container:sleeper busybox wget -qO- http://localhost:4001/health_check'
-        run_result = run(test_cmd, stdout=out, stderr=sys.stdout)
+        run_result = run(test_cmd, quiet=True)
         if run_result.failed:
             self.failed = True
             raise StandardError('Failed to pull busybox image.')
 
-        monitor_response = out.getvalue()
+        monitor_response = run_result.stdout
         monitor = json.loads(monitor_response)
         for svc, state in monitor.iteritems():
             test_msg = '%s is alive' % svc
@@ -114,9 +110,6 @@ class Tester(Step):
         # TODO(greg): There has to be a better way to do this... Maybe run all
         # of the tests and give them a period of time to be consistent? This
         # test is pretty simple and lame.
-
-        print 'Sleeping for 120 seconds to allow bastion to finish initialization...'
-        time.sleep(120)
 
         env.user = 'core'
         env.connection_attempts = 10

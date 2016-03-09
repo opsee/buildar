@@ -35,8 +35,11 @@ class Imager(Step):
         waiter.wait(SnapshotIds=[snapshot_id])
 
         print 'Registering snapshot as AMI...'
+        image_name = 'Opsee-Bastion-%s' % int(time.time())
+        build_context['image_name'] = image_name
+
         response = ec2.register_image(
-            Name='Opsee-Bastion-%s' % time.time(),
+            Name=image_name,
             Description='Opsee Bastion Software',
             RootDeviceName='/dev/xvda',
             VirtualizationType='hvm',
@@ -64,4 +67,4 @@ class Imager(Step):
 
     def cleanup(self, build_context):
         if self.do_cleanup:
-            pass
+            self._ec2.deregister_image(ImageId=build_context['image_id'])

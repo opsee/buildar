@@ -1,7 +1,7 @@
 [Unit]
 Description=Bastion - Monitor
-After=opsee-network.service sleeper.service docker.service env-lock.service
-Requires=opsee-network.service sleeper.service docker.service env-lock.service
+After=opsee-network.service sleeper.service docker.service env-lock.service bastion-etcd.service nsqd.service
+Requires=opsee-network.service sleeper.service docker.service env-lock.service bastion-etcd.service nsqd.service
 
 [Service]
 Restart=always

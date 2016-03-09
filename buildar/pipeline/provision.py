@@ -62,6 +62,8 @@ class Provisioner(Step):
             out.close()
 
     def _copy_files(self):
+        sudo('mkdir /etc/systemd/system/docker.service.d', quiet=True)
+
         for fil in self._files:
             local_path = path.join(os.getcwd(), 'files', fil['name'])
             remote_path = fil['remote_path']
