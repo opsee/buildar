@@ -1,53 +1,95 @@
 ---
+customer_id: ddaadd1a-78e8-11e5-856d-b79e2da78aac
+customer_email: greg@opsee.com
+# This sucks, but you have to keep this in sync with the image
+# below. It'll pull the new image at startup, but yeah... This
+# is still a thing right now.
+bastion_version: 7a3e4d4032515b70325eaecd54568de62e26de57
+bastion_id: 6d7aa0a2-db3a-11e5-a5f4-5b72e7606402
+
+# If you specify an image for a unit here, also specify the
+# version. You can then in your unit do something to the effect
+# of the following:
+# ExecStart=/usr/bin/docker run --rm --name %p {{ image }}:{{ version }}
+# You _must_ specify a version if you specify an image. Strictly version
+# that shit, please. We do this because we want to be able to tie a
+# container to the specific version of the binary. This is extremely
+# helpful for debugging. /endrant
 units:
-  - name: sleeper.service
+  - name: logspout.service
     action: enable
-  - name: opsee-network.service
-    action: enable
-  - name: aws-command.service
-    action: enable
-  - name: bastion-etcd.service
-    action: enable
-  - name: checker.service
-    action: enable
-  - name: connector.service
-    action: enable
-  - name: discovery.service
-    action: enable
+    image: gliderlabs/logspout
+    version: master
   - name: env-lock.path
     action: enable
   - name: env-lock.service
     action: enable
-  - name: hacker.service
+  - name: opsee-network.service
     action: enable
-  - name: logspout.service
+  - name: sleeper.service
     action: enable
-  - name: monitor.service
-    action: enable
-  - name: nsqadmin.service
-    action: enable
+    image: tianon/sleeping-beauty
+    version: latest
   - name: nsqd.service
     action: enable
-  - name: register.service
+    image: nsqio/nsq
+    version: v0.3.5
+  - name: nsqadmin.service
     action: enable
-  - name: runner.service
-    action: enable
+    image: nsqio/nsq
+    version: v0.3.5
   - name: shovel-discovery.service
     action: enable
+    image: nsqio/nsq
+    version: v0.3.5
   - name: shovel-results.service
     action: enable
+    image: nsqio/nsq
+    version: v0.3.5
+  - name: bastion-etcd.service
+    action: enable
+    image: quay.io/coreos/etcd
+    version: v2.0.8
+  - name: connector.service
+    action: enable
+    image: quay.io/opsee/gozer
+    version: latest
+  - name: register.service
+    action: enable
+    image: quay.io/opsee/zuul
+    version: 7a3e4d4032515b70325eaecd54568de62e26de57
   - name: slate.service
     action: enable
+    image: quay.io/opsee/slate
+    version: 0bbfb63bad8d9489974b227e300b42408e5b09fb
+  - name: aws-command.service
+    action: enable
+    image: quay.io/opsee/bastion
+    version: 74ee192aae44ee017dd15f8aefaefd8d61e95615
+  - name: checker.service
+    action: enable
+    image: quay.io/opsee/bastion
+    version: 74ee192aae44ee017dd15f8aefaefd8d61e95615
+  - name: discovery.service
+    action: enable
+    image: quay.io/opsee/bastion
+    version: 74ee192aae44ee017dd15f8aefaefd8d61e95615
+  - name: hacker.service
+    action: enable
+    image: quay.io/opsee/bastion
+    version: 74ee192aae44ee017dd15f8aefaefd8d61e95615
+  - name: monitor.service
+    action: enable
+    image: quay.io/opsee/bastion
+    version: 74ee192aae44ee017dd15f8aefaefd8d61e95615
+  - name: runner.service
+    action: enable
+    image: quay.io/opsee/bastion
+    version: 74ee192aae44ee017dd15f8aefaefd8d61e95615
   - name: test-runner.service
     action: enable
-
-images:
-  - tianon/sleeping-beauty
-  - quay.io/opsee/bastion:stable
-  - quay.io/opsee/gozer:latest
-  - nsqio/nsq:v0.3.5
-  - quay.io/coreos/etcd:v2.0.8
-  - gliderlabs/logspout:master
+    image: quay.io/opsee/bastion
+    version: 74ee192aae44ee017dd15f8aefaefd8d61e95615
 
 # File modes must have a leading 0 because octal
 files:
@@ -61,8 +103,13 @@ files:
     user: root
     group: root
     mode: 0644
-  - name: docker.service.d
-    remote_path: /etc/systemd/system/
+  - name: docker.service.d/10-cgroupfs.conf
+    remote_path: /etc/systemd/system/docker.service.d/10-cgroupfs.conf
+    user: root
+    group: root
+    mode: 0755
+  - name: docker.service.d/50-reboot.conf
+    remote_path: /etc/systemd/system/docker.service.d/50-reboot.conf
     user: root
     group: root
     mode: 0755
