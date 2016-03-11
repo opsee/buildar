@@ -10,7 +10,7 @@ TimeoutStartSec=0
 RestartSec=5s
 ExecStartPre=-/usr/bin/docker stop -t 5 %p
 ExecStartPre=-/usr/bin/docker rm %p
-ExecStart=/usr/bin/docker run --rm --cgroup-parent=systemd --name %p --net=opsee --expose 4150 --expose 4151 nsqio/nsq:v0.3.5 /nsqd
+ExecStart=/usr/bin/docker run --rm --cgroup-parent=systemd --name %p --net=opsee --expose 4150 --expose 4151 {{ image }}:{{ version }} /nsqd
 ExecStop=/usr/bin/docker stop -t 5 %p
 
 [Install]

@@ -21,7 +21,6 @@ write_files:
     content: |
       CUSTOMER_ID={{ customer_id }}
       CUSTOMER_EMAIL={{ customer_email }}
-      BASTION_VERSION={{ bastion_version }}
       BASTION_ID={{ bastion_id }}
       VPN_PASSWORD={{ vpn_password }}
       VPN_REMOTE=bastion.opsee.com
@@ -79,7 +78,6 @@ class Launcher(Step):
         build_context['customer_id']
         build_context['customer_email']
         build_context['basiton_id']
-        build_context['bastion_version']
         build_context['vpn_password']
         """
 
@@ -109,7 +107,6 @@ class Launcher(Step):
             customer_id=build_context['customer_id'],
             bastion_id=build_context['bastion_id'],
             customer_email=build_context['customer_email'],
-            bastion_version=build_context['bastion_version'],
             vpn_password=build_context['vpn_password'],
         ))
 

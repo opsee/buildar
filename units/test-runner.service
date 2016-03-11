@@ -11,7 +11,7 @@ RestartSec=5s
 EnvironmentFile=/etc/opsee/bastion-env.sh
 ExecStartPre=-/usr/bin/docker stop -t 5 %p
 ExecStartPre=-/usr/bin/docker rm %p
-ExecStart=/usr/bin/docker run --rm --cgroup-parent=systemd --name %p --net=opsee -e CUSTOMER_ID -e NSQD_HOST=nsqd:4150 --env-file /etc/opsee/bastion-env.sh quay.io/opsee/bastion:${BASTION_VERSION} /runner --channel test_runner --requests test_check --results test_check_results --id test_runner
+ExecStart=/usr/bin/docker run --rm --cgroup-parent=systemd --name %p --net=opsee -e CUSTOMER_ID -e NSQD_HOST=nsqd:4150 --env-file /etc/opsee/bastion-env.sh {{ image }}:{{ version }} /runner --channel test_runner --requests test_check --results test_check_results --id test_runner
 ExecStop=/usr/bin/docker stop -t 5 %p
 
 [Install]

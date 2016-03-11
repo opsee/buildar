@@ -8,6 +8,7 @@ from os import path
 import sys
 import StringIO
 
+from jinja2 import Template
 from fabric.api import run, execute, put, env, sudo
 from fabric.network import disconnect_all
 
@@ -20,7 +21,7 @@ class Provisioner(Step):
         super(Provisioner, self).__init__(**kwargs)
         self._units = config.get('units', [])
         self._files = config.get('files', [])
-        self._images = config.get('images', [])
+        self._images = set()
 
     def _install_units(self):
         # We put all of the units at once, so that dependencies don't have to be
@@ -30,9 +31,24 @@ class Provisioner(Step):
             unit_path = path.join(os.getcwd(), 'units', unit_name)
             remote_path = '/etc/systemd/system/%s' % unit_name
 
-            put_result = put(local_path=unit_path,
-                             remote_path=remote_path,
-                             use_sudo=True)
+            if 'image' in unit:
+                template = Template(open(unit_path, 'r').read())
+                rendered_unit = StringIO.StringIO()
+                # We'll throw an exception if version is missing. Fucking
+                # keep it that way. Strictly version every single unit that
+                # needs it.
+                rendered_unit.write(template.render(image=unit['image'], version=unit['version']))
+                image = '%s:%s' % (unit['image'], unit['version'])
+                self._images.add(image)
+                put_result = put(local_path=rendered_unit,
+                                 remote_path=remote_path,
+                                 use_sudo=True)
+                rendered_unit.close()
+            else:
+                put_result = put(local_path=unit_path,
+                                 remote_path=remote_path,
+                                 use_sudo=True)
+
 
             if put_result.failed:
                 raise Exception('Unable to copy unit to remote host: %s' % unit_name)
@@ -110,6 +126,7 @@ class Provisioner(Step):
         env.connection_attempts = 10
         env.timeout = 30
         env.key = build_context['ssh_key']
+        env.warn_only = True
         execute(self.provision_bastion, hosts=[build_context['public_ip']])
         disconnect_all()
         return build_context

@@ -19,6 +19,8 @@ class Imager(Step):
 
         instance_id = build_context['instance_id']
         ec2 = self._ec2
+        image_name = 'Opsee-Bastion-%s' % int(time.time())
+        build_context['image_name'] = image_name
 
         waiter = ec2.get_waiter('instance_stopped')
         waiter.wait(InstanceIds=[instance_id])
@@ -28,16 +30,14 @@ class Imager(Step):
         print 'Build instance root volume id: %s' % volume_id
 
         print 'Waiting for root volume snapshot to be ready...'
-        response = ec2.create_snapshot(VolumeId=volume_id, Description='bastion ami')
+        response = ec2.create_snapshot(VolumeId=volume_id, Description=image_name)
         snapshot_id = response['SnapshotId']
+        build_context['snapshot_id'] = snapshot_id
 
         waiter = ec2.get_waiter('snapshot_completed')
         waiter.wait(SnapshotIds=[snapshot_id])
 
         print 'Registering snapshot as AMI...'
-        image_name = 'Opsee-Bastion-%s' % int(time.time())
-        build_context['image_name'] = image_name
-
         response = ec2.register_image(
             Name=image_name,
             Description='Opsee Bastion Software',
@@ -68,3 +68,4 @@ class Imager(Step):
     def cleanup(self, build_context):
         if self.do_cleanup:
             self._ec2.deregister_image(ImageId=build_context['image_id'])
+            self._ec2.delete_snapshot(SnapshotId=build_context['snapshot_id'])
