@@ -195,7 +195,7 @@ class Launcher(Step):
         print 'Test stack id: %s' % stack_id
 
         print 'Waiting for stack creation to finish...'
-        waiter = waiters.CloudFormationWaiter()
+        waiter = waiters.CloudFormationWaiter(self._cfn)
         waiter.wait(stack_name, 'CREATE_COMPLETE')
 
         resources = self._cfn.describe_stack_resources(StackName=stack_name)
@@ -212,8 +212,8 @@ class Launcher(Step):
         print 'Got instance public IP: %s' % public_ip
         build_context['launch_public_ip'] = public_ip
 
-        print 'Sleeping for 180 seconds to allow bastion to finish initialization...'
-        time.sleep(180)
+        print 'Sleeping for 240 seconds to allow bastion to finish initialization...'
+        time.sleep(240)
 
         return build_context
 
@@ -223,7 +223,7 @@ class Launcher(Step):
             stack_name = build_context['launch_stack_name']
             self._cfn.delete_stack(StackName=stack_name)
 
-            waiter = waiters.CloudFormationWaiter()
+            waiter = waiters.CloudFormationWaiter(self._cfn)
             waiter.wait(stack_name, 'DELETE_COMPLETE')
             self._iam.delete_role_policy(RoleName=build_context['role_name'], PolicyName=build_context['policy_name'])
             self._iam.delete_role(RoleName=build_context['role_name'])

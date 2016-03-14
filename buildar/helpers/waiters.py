@@ -12,8 +12,8 @@ class CloudFormationWaiter(object):
     POLL_PERIOD = 30
     MAX_RETRIES = 20
 
-    def __init__(self):
-        self._cfn = boto3.client('cloudformation')
+    def __init__(self, client):
+        self._cfn = client
 
     def wait(self, stack_name, state):
         """Wait for a stack, identified by name, to reach a given state.
@@ -49,8 +49,8 @@ class RolePolicyWaiter(object):
     POLL_PERIOD = 30
     MAX_RETRIES = 10
 
-    def __init__(self):
-        self._iam = boto3.client('iam')
+    def __init__(self, client):
+        self._iam = client
 
     def wait(self, role_name, policy_name, **kwargs):
         i = 0

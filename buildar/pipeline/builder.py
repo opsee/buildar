@@ -20,8 +20,6 @@ class Builder(Step):
 
     def __init__(self, **kwargs):
         super(Builder, self).__init__(**kwargs)
-        self._ec2 = boto3.client('ec2')
-        self._cfn = boto3.client('cloudformation')
         self.key = {}
 
     def _latest_ami(self, build_region):
@@ -30,7 +28,8 @@ class Builder(Step):
         return resp.json()[build_region][self.VIRT_TYPE]
 
     def _create_key_pair(self, stack_name):
-        return self._ec2.create_key_pair(KeyName=stack_name)
+        self.key = self._ec2.create_key_pair(KeyName=stack_name)
+        return self.key
 
     def template_json(self, build_region, build_vpc):
         """Get the CloudFormation template for the build instance."""
@@ -78,14 +77,19 @@ class Builder(Step):
         return template.to_json()
 
     def build(self, build_context):
-        cfn = self._cfn
+        build_region = build_context['build_region']
+
+        self._ec2 = boto3.client('ec2', region_name=build_region)
+        self._cfn = boto3.client('cloudformation', region_name=build_region)
+
         print 'Launching build stack'
         stack_name = 'opsee-bastion-build-%s' % int(time.time())
 
-        self.key = self._create_key_pair(stack_name)
+        self._create_key_pair(stack_name)
         build_context['key_name'] = self.key['KeyName']
 
-        resp = cfn.create_stack(
+        time.sleep(5)
+        resp = self._cfn.create_stack(
             StackName=stack_name,
             TemplateBody=self.template_json(
                 build_context['build_region'],
@@ -96,10 +100,10 @@ class Builder(Step):
         print 'Build stack id: %s' % stack_id
 
         print 'Waiting for stack creation to finish...'
-        waiter = waiters.CloudFormationWaiter()
+        waiter = waiters.CloudFormationWaiter(self._cfn)
         waiter.wait(stack_name, 'CREATE_COMPLETE')
 
-        stack_resp = cfn.describe_stacks(StackName=stack_name)
+        stack_resp = self._cfn.describe_stacks(StackName=stack_name)
         instance_id = stack_resp['Stacks'][0]['Outputs'][0]['OutputValue']
 
         print 'Waiting for build instance (%s) to become available...' % instance_id

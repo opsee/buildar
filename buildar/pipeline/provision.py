@@ -123,7 +123,7 @@ class Provisioner(Step):
         """execute the fabric task"""
 
         env.user = 'core'
-        env.connection_attempts = 10
+        env.connection_attempts = 30
         env.timeout = 30
         env.key = build_context['ssh_key']
         env.warn_only = True
