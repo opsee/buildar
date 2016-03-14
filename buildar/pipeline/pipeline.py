@@ -7,6 +7,8 @@ duties, it has the opportunity to attempt to clean everything up.
 A Pipeline is also a Step and can be embedded in other pipelines.
 """
 
+import traceback
+
 #pylint: disable=unused-import
 from buildar.pipeline.step import Step
 from buildar.pipeline.builder import Builder
@@ -29,6 +31,7 @@ class Pipeline(Step):
         self._executed = []
         self._failed = False
         self._exception_cause = StandardError()
+        self.build_context = {}
 
     def add_step(self, step):
         """Add a step to the pipeline. Must implement the missing methods of
@@ -40,17 +43,19 @@ class Pipeline(Step):
         """Build iterates over the steps in the pipeline and executes them
         in order"""
 
+        self.build_context = build_context
         current_step = ''
 
         try:
             for step in self._steps:
                 current_step = type(step).__name__
                 self._executed.append(step)
-                build_context = step.build(build_context)
+                self.build_context = step.build(self.build_context)
         except Exception as ex:
             print 'Build failed at step %s: %s' % (current_step, ex)
-            self._exception_cause = ex
             self._failed = True
+            traceback.print_exc()
+            raise ex
 
         return build_context
 
@@ -70,16 +75,19 @@ class Pipeline(Step):
             self._executed.reverse()
             for step in self._executed:
                 try:
-                    step.cleanup(build_context)
+                    step.cleanup(self.build_context)
                 except Exception as ex:
                     print 'Cleanup step %s failed: %s' % (type(step).__name__, ex)
-
-            if self._failed:
-                raise self._exception_cause
+                    traceback.print_exc()
 
     def execute(self, build_context):
         """Execute is a convenience function that ties build and cleanup together."""
 
-        build_context = self.build(build_context)
-        self.cleanup(build_context)
+        self.build_context = build_context
+
+        try:
+            self.build(build_context)
+        except Exception as ex:
+            # Cleanups must handle their own exceptions.
+            self.cleanup(build_context)
 

@@ -8,7 +8,7 @@ from buildar.pipeline.step import Step
 class Publisher(Step):
     def build(self, build_context):
         self.images = []
-        self._ec2 = boto3.client('ec2')
+        self._ec2 = boto3.client('ec2', region_name=build_context['build_region'])
         regions = self._ec2.describe_regions()['Regions']
         build_image_id = build_context['image_id']
 
@@ -46,5 +46,7 @@ class Publisher(Step):
                 ]
             )
 
+        build_context
+
     def cleanup(self, build_context):
-        pass
+        build_context

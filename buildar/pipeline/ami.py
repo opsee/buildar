@@ -10,15 +10,14 @@ class Imager(Step):
     """Imager will snapshot an instance's EBS volume, wait for the volume to
     become available, and then create an AMI from that image."""
 
-    def __init__(self, **kwargs):
-        super(Imager, self).__init__(**kwargs)
-        self._ec2 = boto3.client('ec2')
-
     def build(self, build_context):
         """Build the AMI."""
 
         instance_id = build_context['instance_id']
-        ec2 = self._ec2
+        build_region = build_context['build_region']
+
+        ec2 = boto3.client('ec2', region_name=build_region)
+        self._ec2 = ec2
         image_name = 'Opsee-Bastion-%s' % int(time.time())
         build_context['image_name'] = image_name
 

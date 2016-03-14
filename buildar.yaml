@@ -1,11 +1,10 @@
 ---
-customer_id: ddaadd1a-78e8-11e5-856d-b79e2da78aac
-customer_email: greg@opsee.com
-# This sucks, but you have to keep this in sync with the image
-# below. It'll pull the new image at startup, but yeah... This
-# is still a thing right now.
-bastion_version: 7a3e4d4032515b70325eaecd54568de62e26de57
-bastion_id: 6d7aa0a2-db3a-11e5-a5f4-5b72e7606402
+bastion_version: &bastion_version 9be9ad9b61d24eafeb1294906f7765c2a3c6f676
+gozer_version: &gozer_version ae752b43b9badb437b14f5d760b99824b7537b20
+zuul_version: &zuul_version db0cd9217f74775793128616cdba65eaf6b05a2f
+slate_version: &slate_version 0bbfb63bad8d9489974b227e300b42408e5b09fb
+nsq_version: &nsq_version v0.3.5
+etcd_version: &etcd_version v2.0.8
 
 # If you specify an image for a unit here, also specify the
 # version. You can then in your unit do something to the effect
@@ -33,63 +32,63 @@ units:
   - name: nsqd.service
     action: enable
     image: nsqio/nsq
-    version: v0.3.5
+    version: *nsq_version
   - name: nsqadmin.service
     action: enable
     image: nsqio/nsq
-    version: v0.3.5
+    version: *nsq_version
   - name: shovel-discovery.service
     action: enable
     image: nsqio/nsq
-    version: v0.3.5
+    version: *nsq_version
   - name: shovel-results.service
     action: enable
     image: nsqio/nsq
-    version: v0.3.5
+    version: *nsq_version
   - name: bastion-etcd.service
     action: enable
     image: quay.io/coreos/etcd
-    version: v2.0.8
+    version: *etcd_version
   - name: connector.service
     action: enable
     image: quay.io/opsee/gozer
-    version: latest
+    version: *gozer_version
   - name: register.service
     action: enable
     image: quay.io/opsee/zuul
-    version: 7a3e4d4032515b70325eaecd54568de62e26de57
+    version: *zuul_version
   - name: slate.service
     action: enable
     image: quay.io/opsee/slate
-    version: 0bbfb63bad8d9489974b227e300b42408e5b09fb
+    version: *slate_version
   - name: aws-command.service
     action: enable
     image: quay.io/opsee/bastion
-    version: 74ee192aae44ee017dd15f8aefaefd8d61e95615
+    version: *bastion_version
   - name: checker.service
     action: enable
     image: quay.io/opsee/bastion
-    version: 74ee192aae44ee017dd15f8aefaefd8d61e95615
+    version: *bastion_version
   - name: discovery.service
     action: enable
     image: quay.io/opsee/bastion
-    version: 74ee192aae44ee017dd15f8aefaefd8d61e95615
+    version: *bastion_version
   - name: hacker.service
     action: enable
     image: quay.io/opsee/bastion
-    version: 74ee192aae44ee017dd15f8aefaefd8d61e95615
+    version: *bastion_version
   - name: monitor.service
     action: enable
     image: quay.io/opsee/bastion
-    version: 74ee192aae44ee017dd15f8aefaefd8d61e95615
+    version: *bastion_version
   - name: runner.service
     action: enable
     image: quay.io/opsee/bastion
-    version: 74ee192aae44ee017dd15f8aefaefd8d61e95615
+    version: *bastion_version
   - name: test-runner.service
     action: enable
     image: quay.io/opsee/bastion
-    version: 74ee192aae44ee017dd15f8aefaefd8d61e95615
+    version: *bastion_version
 
 # File modes must have a leading 0 because octal
 files:
