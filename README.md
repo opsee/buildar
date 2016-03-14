@@ -26,10 +26,10 @@ version used.
 All of these are also available as CLI flags:
 `--region`
 `--vpc`
-`--customer_email`
-`--customer_id`
-`--bastion_id`
-`--vpn_password`
+`--customer-email`
+`--customer-id`
+`--bastion-id`
+`--vpn-password`
 
 Without all of this, you cannot launch a bastion--and the final step of the
 bastion build process is to launch a bastion with the AMI you just built.
