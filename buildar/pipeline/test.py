@@ -44,6 +44,8 @@ class Tester(Step):
                     pass_message(test_msg)
                 else:
                     fail_message(test_msg)
+                    print 'Printing logs for failed unit: %s' % svc
+                    run('journalctl -u %s' % svc)
                     self.failed = True
 
     def verify_file_contents(self, remote_path, local_path):
