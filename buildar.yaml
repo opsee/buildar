@@ -1,5 +1,5 @@
 ---
-bastion_version: &bastion_version 1891a2a55825d414b17489f13658363d958ab918
+bastion_version: &bastion_version 0929a64dcea598a6b2e83a580cbaf345434e89ad
 gozer_version: &gozer_version ae752b43b9badb437b14f5d760b99824b7537b20
 zuul_version: &zuul_version db0cd9217f74775793128616cdba65eaf6b05a2f
 slate_version: &slate_version 0bbfb63bad8d9489974b227e300b42408e5b09fb
