@@ -89,6 +89,10 @@ units:
     action: enable
     image: quay.io/opsee/bastion
     version: *bastion_version
+  - name: shovel-heartbeat.service
+    action: enable
+    image: nsqio/nsq
+    version: *nsq_version
 
 # File modes must have a leading 0 because octal
 files:
