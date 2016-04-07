@@ -19,10 +19,6 @@ with the build account.
 
 `BUILDAR_VPN_PASSWORD` - The VPN password for the build bastion.
 
-`BUILDAR_BASTION_VERSION` - This is a version associated with the bastion. It
-is used for tagging the AMI only and has no impact on the actual software
-version used.
-
 All of these are also available as CLI flags:
 `--region`
 `--vpc`

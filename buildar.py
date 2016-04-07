@@ -17,16 +17,11 @@ from buildar.pipeline.pipeline import Builder, Provisioner, Imager, Pipeline, La
 @click.option('--customer-id', help='Customer ID (BUILDAR_CUSTOMER_ID)')
 @click.option('--customer-email', help='Customer e-mail (BUILDAR_CUSTOMER_EMAIL)')
 @click.option('--bastion-id', help='Bastion ID (BUILDAR_BASTION_ID)')
-@click.option('--bastion-version', help='Bastion version (BUILDAR_BASTION_VERSION)')
 @click.option('--vpn-password', help='VPN password (BUILDAR_VPN_PASSWORD)')
-def build(region, vpc, cleanup, publish, customer_id, customer_email, bastion_id, bastion_version, vpn_password):
+def build(region, vpc, cleanup, publish, customer_id, customer_email, bastion_id, vpn_password):
     cfg_file = file('buildar.yaml', 'r')
     config = yaml.load(cfg_file)
-
-    vpn_password = os.getenv('BASTION_VPN_PASSWORD')
-    if vpn_password == '':
-        print 'You must set the BASTION_VPN_PASSWORD environment variable for the build bastion.'
-        sys.exit(1)
+    bastion_version = config['bastion_version']
 
     build_context = {
         'build_vpc': vpc,
@@ -59,6 +54,15 @@ def build(region, vpc, cleanup, publish, customer_id, customer_email, bastion_id
     if not cleanup:
         pp = pprint.PrettyPrinter(indent=2)
         pp.pprint(build_context)
+
+        key = build_context['ssh_key']
+        kfname = build_context['key_name'] + '.pem'
+        keyfile = open(kfname, 'w')
+        keyfile.write(key)
+        keyfile.close()
+        os.chmod(kfname, 0600)
+
+        print 'ssh -i %s core@%s' % (kfname, build_context['launch_public_ip'])
 
 if __name__ == '__main__':
     build(auto_envvar_prefix='BUILDAR')

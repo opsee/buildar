@@ -140,7 +140,7 @@ class Launcher(Step):
             Parameters=[
                 {
                     'ParameterKey': 'AllowSSH',
-                    'ParameterValue': 'True',
+                    'ParameterValue': 'False',
                     'UsePreviousValue': False,
                 },
                 {
@@ -207,8 +207,18 @@ class Launcher(Step):
         waiter = self._ec2.get_waiter('instance_running')
         waiter.wait(InstanceIds=[instance_id])
 
-        public_ip = self._ec2.describe_instances(InstanceIds=[instance_id])['Reservations'][0]\
-                ['Instances'][0]['NetworkInterfaces'][0]['Association']['PublicIp']
+        instance_info = self._ec2.describe_instances(InstanceIds=[instance_id])['Reservations'][0]['Instances'][0]
+        public_ip = instance_info['NetworkInterfaces'][0]['Association']['PublicIp']
+        sg_id = instance_info['SecurityGroups'][0]['GroupId']
+
+        self._ec2.authorize_security_group_ingress(
+            GroupId=sg_id,
+            IpProtocol='tcp',
+            FromPort=22,
+            ToPort=22,
+            CidrIp='0.0.0.0/0',
+        )
+
         print 'Got instance public IP: %s' % public_ip
         build_context['launch_public_ip'] = public_ip
 

@@ -1,7 +1,7 @@
 ---
-bastion_version: &bastion_version 0929a64dcea598a6b2e83a580cbaf345434e89ad
+bastion_version: &bastion_version 9c434220862e1a9bc51c6db956094d65940667c0
 gozer_version: &gozer_version ae752b43b9badb437b14f5d760b99824b7537b20
-zuul_version: &zuul_version db0cd9217f74775793128616cdba65eaf6b05a2f
+zuul_version: &zuul_version cd15b3fc658de6e2489b278b0d0ae7924fc860cf
 slate_version: &slate_version 0bbfb63bad8d9489974b227e300b42408e5b09fb
 nsq_version: &nsq_version v0.3.5
 etcd_version: &etcd_version v2.0.8
@@ -106,8 +106,8 @@ files:
     user: root
     group: root
     mode: 0644
-  - name: docker.service.d/10-cgroupfs.conf
-    remote_path: /etc/systemd/system/docker.service.d/10-cgroupfs.conf
+  - name: docker.service.d/10-dockeropts.conf
+    remote_path: /etc/systemd/system/docker.service.d/10-dockeropts.conf
     user: root
     group: root
     mode: 0755
