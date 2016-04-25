@@ -1,8 +1,8 @@
 ---
-bastion_version: &bastion_version 6ab1c04a0dd8f65436a10dfda103a364a7039462
+bastion_version: &bastion_version f85a1b3
 gozer_version: &gozer_version ae752b43b9badb437b14f5d760b99824b7537b20
 zuul_version: &zuul_version cd15b3fc658de6e2489b278b0d0ae7924fc860cf
-slate_version: &slate_version 2b3d5da2d377e182a6703c6b60dd57e72b5df97f
+slate_version: &slate_version 27aee50704da6a9955164481f299c12599908c66 
 nsq_version: &nsq_version v0.3.5
 etcd_version: &etcd_version v2.0.8
 
