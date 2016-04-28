@@ -18,7 +18,8 @@ from buildar.pipeline.pipeline import Builder, Provisioner, Imager, Pipeline, La
 @click.option('--customer-email', help='Customer e-mail (BUILDAR_CUSTOMER_EMAIL)')
 @click.option('--bastion-id', help='Bastion ID (BUILDAR_BASTION_ID)')
 @click.option('--vpn-password', help='VPN password (BUILDAR_VPN_PASSWORD)')
-def build(region, vpc, cleanup, publish, customer_id, customer_email, bastion_id, vpn_password):
+@click.option('--coreos-ami', default='latest', help='Build with specific coreos AMI (BUILDAR_COREOS_AMI)')
+def build(region, vpc, cleanup, publish, customer_id, customer_email, bastion_id, vpn_password, coreos_ami):
     cfg_file = file('buildar.yaml', 'r')
     config = yaml.load(cfg_file)
     bastion_version = config['bastion_version']
@@ -31,6 +32,7 @@ def build(region, vpc, cleanup, publish, customer_id, customer_email, bastion_id
         'bastion_id': bastion_id,
         'bastion_version': bastion_version,
         'vpn_password': vpn_password,
+        'coreos_ami': coreos_ami
     }
 
     build_pipeline = Pipeline(cleanup=cleanup)
