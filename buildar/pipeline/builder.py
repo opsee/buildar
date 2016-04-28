@@ -21,11 +21,14 @@ class Builder(Step):
     def __init__(self, **kwargs):
         super(Builder, self).__init__(**kwargs)
         self.key = {}
+        self.coreos_ami = None
 
     def _latest_ami(self, build_region):
-        resp = requests.get(self.COREOS_URL)
-        resp.close()
-        return resp.json()[build_region][self.VIRT_TYPE]
+        if self.coreos_ami == "latest" or (not self.coreos_ami):
+            resp = requests.get(self.COREOS_URL)
+            resp.close()
+            self.coreos_ami = resp.json()[build_region][self.VIRT_TYPE]
+        return self.coreos_ami
 
     def _create_key_pair(self, stack_name):
         self.key = self._ec2.create_key_pair(KeyName=stack_name)
@@ -78,6 +81,7 @@ class Builder(Step):
 
     def build(self, build_context):
         build_region = build_context['build_region']
+        self.coreos_ami = build_context['coreos_ami']
 
         self._ec2 = boto3.client('ec2', region_name=build_region)
         self._cfn = boto3.client('cloudformation', region_name=build_region)
