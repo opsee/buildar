@@ -61,10 +61,6 @@ units:
     action: enable
     image: quay.io/opsee/slate
     version: *slate_version
-  - name: aws-command.service
-    action: enable
-    image: quay.io/opsee/bastion
-    version: *bastion_version
   - name: checker.service
     action: enable
     image: quay.io/opsee/bastion
