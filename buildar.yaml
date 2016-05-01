@@ -1,5 +1,5 @@
 ---
-bastion_version: &bastion_version f85a1b3
+bastion_version: &bastion_version d96013e
 gozer_version: &gozer_version ae752b43b9badb437b14f5d760b99824b7537b20
 zuul_version: &zuul_version cd15b3fc658de6e2489b278b0d0ae7924fc860cf
 slate_version: &slate_version 27aee50704da6a9955164481f299c12599908c66 
@@ -37,10 +37,6 @@ units:
     action: enable
     image: nsqio/nsq
     version: *nsq_version
-  - name: shovel-discovery.service
-    action: enable
-    image: nsqio/nsq
-    version: *nsq_version
   - name: shovel-results.service
     action: enable
     image: nsqio/nsq
@@ -62,10 +58,6 @@ units:
     image: quay.io/opsee/slate
     version: *slate_version
   - name: checker.service
-    action: enable
-    image: quay.io/opsee/bastion
-    version: *bastion_version
-  - name: discovery.service
     action: enable
     image: quay.io/opsee/bastion
     version: *bastion_version
