@@ -61,10 +61,6 @@ units:
     action: enable
     image: quay.io/opsee/bastion
     version: *bastion_version
-  - name: hacker.service
-    action: enable
-    image: quay.io/opsee/bastion
-    version: *bastion_version
   - name: monitor.service
     action: enable
     image: quay.io/opsee/bastion
