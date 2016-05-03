@@ -1,5 +1,5 @@
 ---
-bastion_version: &bastion_version d96013e
+bastion_version: &bastion_version 4fef7be
 gozer_version: &gozer_version ae752b43b9badb437b14f5d760b99824b7537b20
 zuul_version: &zuul_version cd15b3fc658de6e2489b278b0d0ae7924fc860cf
 slate_version: &slate_version 27aee50704da6a9955164481f299c12599908c66 
@@ -61,15 +61,15 @@ units:
     action: enable
     image: quay.io/opsee/bastion
     version: *bastion_version
-  - name: hacker.service
-    action: enable
-    image: quay.io/opsee/bastion
-    version: *bastion_version
   - name: monitor.service
     action: enable
     image: quay.io/opsee/bastion
     version: *bastion_version
   - name: runner.service
+    action: enable
+    image: quay.io/opsee/bastion
+    version: *bastion_version
+  - name: cwrunner.service
     action: enable
     image: quay.io/opsee/bastion
     version: *bastion_version

@@ -1,0 +1,18 @@
+[Unit]
+Description=Bastion - Cloudwatch Check Runner
+After=opsee-network.service docker.service
+Requires=opsee-network.service docker.service
+
+[Service]
+Restart=always
+User=core
+TimeoutStartSec=0
+RestartSec=5s
+EnvironmentFile=/etc/opsee/bastion-env.sh
+ExecStartPre=-/usr/bin/docker stop -t 5 %p
+ExecStartPre=-/usr/bin/docker rm %p
+ExecStart=/usr/bin/docker run --rm --cgroup-parent=systemd --name %p --net=container:sleeper -e CUSTOMER_ID -e NSQD_HOST=nsqd:4150 -e SLATE_HOST=slate:7000 --env-file /etc/opsee/bastion-env.sh {{ image }}:{{ version }} /cwrunner
+ExecStop=/usr/bin/docker stop -t 5 %p
+
+[Install]
+WantedBy=opsee-network.service
