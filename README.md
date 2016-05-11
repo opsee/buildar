@@ -1,5 +1,30 @@
 # Buildar
 
+## Installation
+
+You need to have your virtualenv setup in order to use buildar. First, make
+sure that you have virtualenv installed. (I install it globally, so sudo is
+required).
+
+`sudo pip install virtualenv`
+
+Next, you need to initialize the virtual python environment in buildar's
+working directory. Out of habit, I always put this in a .env directory
+(the second argument to virtualenv below).
+
+`virtualenv init .env`
+
+Activate the virtualenv.
+
+`. .env/bin/activate`
+
+Then install buildar's dependencies.
+
+`pip install -r requirements.txt`
+
+Done.
+
+
 ## Configuration
 
 The following environment variables must be set in order to build an AMI:
