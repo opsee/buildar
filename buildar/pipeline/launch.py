@@ -115,17 +115,17 @@ class Launcher(Step):
         resp = self._ec2.describe_subnets(
             Filters=[
                 {
-                    'Name': 'vpc-id', 
+                    'Name': 'vpc-id',
                     'Values':[build_context['build_vpc']]
-                }, 
+                },
                 {
-                    'Name': 'availabilityZone', 
+                    'Name': 'availabilityZone',
                     # ${reigon}a is almost always going to exist. We can get AZs and pick one
                     # later if we need to.
                     'Values': ['%sa' % build_context['build_region']]
-                }, 
+                },
                 {
-                    'Name': 'defaultForAz', 
+                    'Name': 'defaultForAz',
                     'Values': ['true']
                 },
             ]
@@ -176,11 +176,6 @@ class Launcher(Step):
                 {
                     'ParameterKey': 'BastionId',
                     'ParameterValue': stack_name,
-                    'UsePreviousValue': False,
-                },
-                {
-                    'ParameterKey': 'OpseeRole',
-                    'ParameterValue': role_name,
                     'UsePreviousValue': False,
                 },
                 {

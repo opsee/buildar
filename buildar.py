@@ -47,7 +47,7 @@ def build(region, vpc, cleanup, publish, customer_id, customer_email, bastion_id
     pipeline = Pipeline(cleanup=cleanup)
     pipeline.add_step(build_pipeline)
     pipeline.add_step(test_pipeline)
-    
+
     if publish:
         pipeline.add_step(Publisher())
 
@@ -57,14 +57,7 @@ def build(region, vpc, cleanup, publish, customer_id, customer_email, bastion_id
         pp = pprint.PrettyPrinter(indent=2)
         pp.pprint(build_context)
 
-        key = build_context['ssh_key']
-        kfname = build_context['key_name'] + '.pem'
-        keyfile = open(kfname, 'w')
-        keyfile.write(key)
-        keyfile.close()
-        os.chmod(kfname, 0600)
-
-        print 'ssh -i %s core@%s' % (kfname, build_context['launch_public_ip'])
+        print 'ssh -i %s core@%s' % (build_context['key_name'] + '.pem', build_context['launch_public_ip'])
 
 if __name__ == '__main__':
     build(auto_envvar_prefix='BUILDAR')

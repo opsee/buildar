@@ -127,6 +127,8 @@ class Provisioner(Step):
         env.timeout = 30
         env.key = build_context['ssh_key']
         env.warn_only = True
+        env.use_exceptions_for['network'] = False
+        env.skip_bad_hosts = True
         execute(self.provision_bastion, hosts=[build_context['public_ip']])
         disconnect_all()
         return build_context

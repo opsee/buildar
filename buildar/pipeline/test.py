@@ -114,6 +114,9 @@ class Tester(Step):
         # test is pretty simple and lame.
 
         env.user = 'core'
+        env.warn_only = True
+        env.use_exceptions_for['network'] = False
+        env.skip_bad_hosts = True
         env.connection_attempts = 10
         env.timeout = 30
         env.key = build_context['ssh_key']

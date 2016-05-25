@@ -1,8 +1,8 @@
 ---
-bastion_version: &bastion_version ff17e09
+bastion_version: &bastion_version ea339e2
 gozer_version: &gozer_version ae752b43b9badb437b14f5d760b99824b7537b20
 zuul_version: &zuul_version cd15b3fc658de6e2489b278b0d0ae7924fc860cf
-slate_version: &slate_version 27aee50704da6a9955164481f299c12599908c66 
+slate_version: &slate_version 27aee50704da6a9955164481f299c12599908c66
 nsq_version: &nsq_version v0.3.5
 etcd_version: &etcd_version v2.0.8
 
@@ -96,11 +96,6 @@ files:
     mode: 0644
   - name: docker.service.d/10-dockeropts.conf
     remote_path: /etc/systemd/system/docker.service.d/10-dockeropts.conf
-    user: root
-    group: root
-    mode: 0755
-  - name: docker.service.d/50-reboot.conf
-    remote_path: /etc/systemd/system/docker.service.d/50-reboot.conf
     user: root
     group: root
     mode: 0755

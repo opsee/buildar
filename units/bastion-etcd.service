@@ -10,7 +10,7 @@ TimeoutStartSec=0
 RestartSec=5s
 ExecStartPre=-/usr/bin/docker stop -t 5 %p
 ExecStartPre=-/usr/bin/docker rm %p
-ExecStart=/usr/bin/docker run --rm --cgroup-parent=systemd --name etcd --expose 2379 --net=opsee {{ image }}:{{ version }} -name bastion_etcd -advertise-client-urls http://127.0.0.1:2379 -listen-client-urls http://0.0.0.0:2379 -initial-advertise-peer-urls http://127.0.0.1:2380 -listen-peer-urls http://0.0.0.0:2380 -initial-cluster-token opsee -initial-cluster bastion_etcd=http://127.0.0.1:2380 -initial-cluster-state new
+ExecStart=/usr/bin/docker run --rm --name etcd --expose 2379 --net=opsee {{ image }}:{{ version }} -name bastion_etcd -advertise-client-urls http://127.0.0.1:2379 -listen-client-urls http://0.0.0.0:2379 -initial-advertise-peer-urls http://127.0.0.1:2380 -listen-peer-urls http://0.0.0.0:2380 -initial-cluster-token opsee -initial-cluster bastion_etcd=http://127.0.0.1:2380 -initial-cluster-state new
 ExecStop=/usr/bin/docker stop -t 5 %p
 
 [Install]

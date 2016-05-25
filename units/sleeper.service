@@ -10,7 +10,7 @@ RestartSec=5s
 EnvironmentFile=/etc/opsee/bastion-env.sh
 ExecStartPre=-/usr/bin/docker kill %p
 ExecStartPre=-/usr/bin/docker rm %p
-ExecStart=/usr/bin/docker run --cgroup-parent=systemd --rm --name %p --net=opsee --dns=${DNS_SERVER} tianon/sleeping-beauty
+ExecStart=/usr/bin/docker run --rm --name %p --net=opsee --dns=${DNS_SERVER} tianon/sleeping-beauty
 
 [Install]
 WantedBy=opsee-network.service

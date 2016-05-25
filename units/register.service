@@ -11,7 +11,7 @@ TimeoutStartSec=0
 RestartSec=5s
 ExecStartPre=-/usr/bin/docker stop -t 5 %p
 ExecStartPre=-/usr/bin/docker rm %p
-ExecStart=/usr/bin/docker run --rm --cgroup-parent=systemd --name=%p --env-file=/etc/opsee/bastion-env.sh --net="container:sleeper" --volume /var/run/opsee:/state -e ETCD_HOST=http://etcd:2379 -e NSQD_HOST {{ image }}:{{ version }} register -f /state/ip
+ExecStart=/usr/bin/docker run --rm --name=%p --env-file=/etc/opsee/bastion-env.sh --net="container:sleeper" --volume /var/run/opsee:/state -e ETCD_HOST=http://etcd:2379 -e NSQD_HOST {{ image }}:{{ version }} register -f /state/ip
 ExecStop=/usr/bin/docker stop -t 5 %p
 
 [Install]

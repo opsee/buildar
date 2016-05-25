@@ -12,7 +12,7 @@ RestartSec=5s
 EnvironmentFile=/etc/opsee/bastion-env.sh
 ExecStartPre=-/usr/bin/docker stop -t 5 %p
 ExecStartPre=-/usr/bin/docker rm %p
-ExecStart=/usr/bin/docker run --rm --cgroup-parent=systemd --name=%p --net=container:sleeper --env-file=/etc/opsee/bastion-env.sh --cap-add=NET_ADMIN --device=/dev/net/tun --volume /var/run/opsee:/gozer/state {{ image }}:{{ version }} client
+ExecStart=/usr/bin/docker run --rm --name=%p --net=container:sleeper --env-file=/etc/opsee/bastion-env.sh --cap-add=NET_ADMIN --device=/dev/net/tun --volume /var/run/opsee:/gozer/state {{ image }}:{{ version }} client
 ExecStop=/usr/bin/docker stop -t 5 %p
 
 [Install]

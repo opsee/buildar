@@ -1,5 +1,6 @@
 """Setup the build instance for the bastion."""
 
+import os
 import time
 
 from troposphere import Template, Ref, Output
@@ -116,6 +117,12 @@ class Builder(Step):
 
         build_context['instance_id'] = instance_id
         build_context['ssh_key'] = self.key['KeyMaterial']
+        key = build_context['ssh_key']
+        kfname = build_context['key_name'] + '.pem'
+        keyfile = open(kfname, 'w')
+        keyfile.write(key)
+        keyfile.close()
+        os.chmod(kfname, 0600)
 
         public_ip = self._ec2.describe_instances(InstanceIds=[build_context['instance_id']])['Reservations'][0]\
                 ['Instances'][0]['NetworkInterfaces'][0]['Association']['PublicIp']

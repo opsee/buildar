@@ -11,7 +11,7 @@ TimeoutStartSec=0
 RestartSec=5s
 ExecStartPre=-/usr/bin/docker stop -t 5 %p
 ExecStartPre=-/usr/bin/docker rm %p
-ExecStart=/usr/bin/docker run --rm --cgroup-parent=systemd --name %p --net="container:sleeper" {{ image }}:{{ version }} /nsq_to_nsq --topic=heartbeat --channel=%p --nsqd-tcp-address=nsqd:4150 --destination-nsqd-tcp-address=${NSQD_HOST} --destination-topic=_.heartbeat
+ExecStart=/usr/bin/docker run --rm --name %p --net="container:sleeper" {{ image }}:{{ version }} /nsq_to_nsq --topic=heartbeat --channel=%p --nsqd-tcp-address=nsqd:4150 --destination-nsqd-tcp-address=${NSQD_HOST} --destination-topic=_.heartbeat
 ExecStop=/usr/bin/docker stop -t 5 %p
 
 [Install]
