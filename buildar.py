@@ -24,7 +24,7 @@ def build(region, vpc, cleanup, publish, customer_id, customer_email, bastion_id
     config = yaml.load(cfg_file)
     bastion_version = config['bastion_version']
 
-    release_tag = publish ? 'stable' : 'beta'
+    release_tag = 'stable' if publish else 'beta'
     build_context = {
         'build_vpc': vpc,
         'build_region': region,
