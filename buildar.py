@@ -7,7 +7,7 @@ import yaml
 import json
 import click
 
-from buildar.pipeline.pipeline import Builder, Provisioner, Imager, Pipeline, Launcher, Tester, Publisher
+from buildar.pipeline.pipeline import Builder, Provisioner, Imager, Pipeline, Launcher, Tester, Publisher, Tagger
 
 @click.command()
 @click.option('--region', default='us-east-1', help='Region to build in. (BUILDAR_REGION)')
@@ -24,6 +24,7 @@ def build(region, vpc, cleanup, publish, customer_id, customer_email, bastion_id
     config = yaml.load(cfg_file)
     bastion_version = config['bastion_version']
 
+    release_tag = publish ? 'stable' : 'beta'
     build_context = {
         'build_vpc': vpc,
         'build_region': region,
@@ -32,7 +33,8 @@ def build(region, vpc, cleanup, publish, customer_id, customer_email, bastion_id
         'bastion_id': bastion_id,
         'bastion_version': bastion_version,
         'vpn_password': vpn_password,
-        'coreos_ami': coreos_ami
+        'coreos_ami': coreos_ami,
+        'release_tag': release_tag,
     }
 
     build_pipeline = Pipeline(cleanup=cleanup)
@@ -50,6 +52,7 @@ def build(region, vpc, cleanup, publish, customer_id, customer_email, bastion_id
 
     if publish:
         pipeline.add_step(Publisher())
+        pipeline.add_step(Tagger())
 
     pipeline.execute(build_context)
 

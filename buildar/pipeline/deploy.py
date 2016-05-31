@@ -27,24 +27,10 @@ class Publisher(Step):
                 image_id = resp['ImageId']
             else:
                 image_id = build_image_id
-
-            time.sleep(5)
-            region_client.create_tags(Resources=[image_id],
-                Tags=[
-                    {
-                        'Key': 'release',
-                        'Value': 'stable'
-                    },
-                    {
-                        'Key': 'sha',
-                        'Value': build_context['bastion_version']
-                    },
-                    {
-                        'Key': 'opsee',
-                        'Value': 'bastion'
-                    }
-                ]
-            )
+        
+        # sleep a few seconds before the next step so that the images
+        # are returned from by the apis.
+        time.sleep(5)
 
         build_context
 

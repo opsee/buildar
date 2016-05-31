@@ -17,6 +17,7 @@ from buildar.pipeline.ami import Imager
 from buildar.pipeline.launch import Launcher
 from buildar.pipeline.test import Tester
 from buildar.pipeline.deploy import Publisher
+from buildar.pipeline.tag import Tagger
 
 class Pipeline(Step):
     """Pipeline can be used to encapsulate a set of steps or used as a step
