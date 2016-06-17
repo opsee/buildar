@@ -1,7 +1,7 @@
 [Unit]
 Description=Bastion - Check Runner
-After=opsee-network.service docker.service
-Requires=opsee-network.service docker.service
+After=opsee-network.service docker.service slate.service
+Requires=opsee-network.service docker.service slate.service
 
 [Service]
 Restart=always

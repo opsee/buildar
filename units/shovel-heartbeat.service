@@ -1,7 +1,7 @@
 [Unit]
 Description=NSQ Shovel: Heartbeat
-After=opsee-network.service sleeper.service docker.service
-Requires=opsee-network.service sleeper.service docker.service
+After=opsee-network.service sleeper.service docker.service connector.service
+Requires=opsee-network.service sleeper.service docker.service connector.service
 
 [Service]
 Restart=always
