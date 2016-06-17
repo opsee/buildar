@@ -20,8 +20,17 @@ class Tagger(Step):
                     ])
 
             image = resp['Images'][0]
-            release = [x for x in image['Tags'] if x['Key'] == 'release'][0]['Value']
-            sha = [x for x in image['Tags'] if x['Key'] == 'sha'][0]['Value']
+            tags = image.get('Tags', [])
+            release = [x for x in tags if x['Key'] == 'release']
+            sha = [x for x in tags if x['Key'] == 'sha']
+            if len(release) > 0:
+                release = release[0]['Value']
+            else:
+                release = "beta"
+            if len(sha) > 0:
+                sha = sha[0]['Value']
+            else: 
+                sha = "dunno"
 
             region_client.create_tags(Resources=[image['ImageId']],
                     Tags=[
