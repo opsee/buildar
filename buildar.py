@@ -14,17 +14,18 @@ from buildar.pipeline.pipeline import Builder, Provisioner, Imager, Pipeline, La
 @click.option('--vpc', default='vpc-31a0cc54', help='VPC to build in. (BUILDAR_VPC)')
 @click.option('--cleanup/--no-cleanup', default=True, help='Run cleanup steps for pipelines.')
 @click.option('--publish/--no-publish', default=False, help='Publish AMIs at the end of the build')
+@click.option('--release-tag', default='build', help='Tag for the release (e.g. beta, build, stable)')
 @click.option('--customer-id', help='Customer ID (BUILDAR_CUSTOMER_ID)')
 @click.option('--customer-email', help='Customer e-mail (BUILDAR_CUSTOMER_EMAIL)')
 @click.option('--bastion-id', help='Bastion ID (BUILDAR_BASTION_ID)')
 @click.option('--vpn-password', help='VPN password (BUILDAR_VPN_PASSWORD)')
 @click.option('--coreos-ami', default='latest', help='Build with specific coreos AMI (BUILDAR_COREOS_AMI)')
-def build(region, vpc, cleanup, publish, customer_id, customer_email, bastion_id, vpn_password, coreos_ami):
+def build(region, vpc, cleanup, publish, release_tag, customer_id, customer_email, bastion_id, vpn_password, coreos_ami):
     cfg_file = file('buildar.yaml', 'r')
     config = yaml.load(cfg_file)
     bastion_version = config['bastion_version']
 
-    release_tag = 'stable' if publish else 'beta'
+    release_tag = release_tag
     build_context = {
         'build_vpc': vpc,
         'build_region': region,
