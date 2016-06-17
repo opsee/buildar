@@ -1,7 +1,7 @@
 [Unit]
 Description=Bastion - Checker
-After=opsee-network.service sleeper.service docker.service env-lock.service
-Requires=opsee-network.service sleeper.service docker.service env-lock.service
+After=opsee-network.service sleeper.service docker.service env-lock.service connector.service
+Requires=opsee-network.service sleeper.service docker.service env-lock.service connector.service
 
 [Service]
 Restart=always
