@@ -42,12 +42,14 @@ class Provisioner(Step):
                 self._images.add(image)
                 put_result = put(local_path=rendered_unit,
                                  remote_path=remote_path,
-                                 use_sudo=True)
+                                 use_sudo=True,
+                                 mirror_local_mode=True)
                 rendered_unit.close()
             else:
                 put_result = put(local_path=unit_path,
                                  remote_path=remote_path,
-                                 use_sudo=True)
+                                 use_sudo=True,
+                                 mirror_local_mode=True)
 
 
             if put_result.failed:
@@ -85,7 +87,8 @@ class Provisioner(Step):
             remote_path = fil['remote_path']
             put_result = put(local_path=local_path,
                              remote_path=remote_path,
-                             use_sudo=True)
+                             use_sudo=True,
+                             mirror_local_mode=True)
 
             if put_result.failed:
                 raise Exception('Unable to copy file to remote host: %s' % fil['name'])

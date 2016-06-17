@@ -1,7 +1,7 @@
 [Unit]
 Description=Base container for opsee-side services
 After=docker.service opsee-network.service
-Requires=docker.serivce opsee-network.service
+Requires=docker.service opsee-network.service
 
 [Service]
 User=core
