@@ -68,3 +68,4 @@ class Imager(Step):
         if self.do_cleanup:
             self._ec2.deregister_image(ImageId=build_context['image_id'])
             self._ec2.delete_snapshot(SnapshotId=build_context['snapshot_id'])
+        return build_context

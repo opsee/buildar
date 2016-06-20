@@ -48,7 +48,7 @@ class Tagger(Step):
                         },
                     ])
 
-        build_context
+        return build_context
     
     def cleanup(self, build_context):
-        build_context
+        return build_context

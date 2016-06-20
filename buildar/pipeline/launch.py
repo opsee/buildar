@@ -232,3 +232,5 @@ class Launcher(Step):
             waiter.wait(stack_name, 'DELETE_COMPLETE')
             self._iam.delete_role_policy(RoleName=build_context['role_name'], PolicyName=build_context['policy_name'])
             self._iam.delete_role(RoleName=build_context['role_name'])
+        
+        return build_context

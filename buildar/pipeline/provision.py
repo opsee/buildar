@@ -142,3 +142,5 @@ class Provisioner(Step):
 
         if self.do_cleanup:
             pass
+        
+        return build_context

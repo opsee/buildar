@@ -32,7 +32,7 @@ class Publisher(Step):
         # are returned from by the apis.
         time.sleep(5)
 
-        build_context
+        return build_context
 
     def cleanup(self, build_context):
-        build_context
+        return build_context

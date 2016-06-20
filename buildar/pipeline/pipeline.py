@@ -16,7 +16,7 @@ from buildar.pipeline.provision import Provisioner
 from buildar.pipeline.ami import Imager
 from buildar.pipeline.launch import Launcher
 from buildar.pipeline.test import Tester
-from buildar.pipeline.deploy import Publisher
+from buildar.pipeline.publish import Publisher
 from buildar.pipeline.tag import Tagger
 
 class Pipeline(Step):
